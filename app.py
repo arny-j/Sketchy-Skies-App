@@ -8,14 +8,17 @@ from PIL import Image, ImageTk
 from datetime import datetime
 
 # Initialize ttkbootstrap style
-style = Style(theme="superhero")  # Choose a modern theme
+style = Style(theme="superhero") 
 root = style.master
-root.title("Space Flight Database")
-root.geometry("650x600")
+root.title("Sketchy Skies Database")
+root.geometry("1100x650")
 
-    # Create a frame for the form
-frame = Frame(root)  # No "bg" option for ttkbootstrap Frame
-frame.pack(pady=20, padx=20, fill="both", expand=True)
+# Set a global font for tkinter widgets
+root.option_add("*Font", "Lato 12")
+
+# Create a frame for the form
+frame = Frame(root)
+frame.pack(pady=30, padx=20, fill="both", expand=True)
 
 # Clear frame function
 def clear_frame(frame):
@@ -41,8 +44,8 @@ def landing_page():
 
     # Configure the parent frame
     frame.rowconfigure(0, weight=1)
-    frame.columnconfigure(0, weight=1)  # Left column (list box)
-    frame.columnconfigure(1, weight=3)  # Right column (details)
+    frame.columnconfigure(0, weight=1)  
+    frame.columnconfigure(1, weight=3)  
 
     # Create a list box for records on the left
     listbox_frame = Frame(frame)
@@ -65,31 +68,56 @@ def landing_page():
     # Create a details view on the right
     details_frame = ttk.LabelFrame(frame, text="Record Details", padding=(16, 7))
     details_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+    
+    # Configure grid weights for details_frame for responsiveness
+    details_frame.columnconfigure(0, weight=1)
+    details_frame.columnconfigure(1, weight=2) 
 
     # Hardcoded details
     name_label = Label(details_frame, text="Flight Name:")
     name_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-    name_value = Label(details_frame, text="Apollo 11")
+    name_value = Label(details_frame, text="-")
     name_value.grid(row=0, column=1, padx=10, pady=10, sticky="w")
 
     description_label = Label(details_frame, text="Flight Description:")
     description_label.grid(row=1, column=0, padx=10, pady=10, sticky="w")
-    description_value = Label(details_frame, text=("Lorem ipsum dolor sit amet, consectetur adipiscing elit. " * 5), wraplength=300, justify="left")
-    description_value.grid(row=1, column=1, padx=10, pady=10, sticky="w")
+    description_value = Text(details_frame, wrap="word", height=5, width=40, padx=5, pady=5)
+    description_value.insert("1.0", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " * 10)
+    description_value.config(state="disabled")  # Make the Text widget read-only
+    description_value.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
 
     flight_type_label = Label(details_frame, text="Flight Type:")
     flight_type_label.grid(row=2, column=0, padx=10, pady=10, sticky="w")
-    flight_type_value = Label(details_frame, text="Exploratory")
+    flight_type_value = Label(details_frame, text="-")
     flight_type_value.grid(row=2, column=1, padx=10, pady=10, sticky="w")
 
     date_label = Label(details_frame, text="Record Date:")
     date_label.grid(row=3, column=0, padx=10, pady=10, sticky="w")
-    date_value = Label(details_frame, text="1969-07-16")
+    date_value = Label(details_frame, text="-")
     date_value.grid(row=3, column=1, padx=10, pady=10, sticky="w")
+
+    # Add an image field with a fixed size and border
+    image_frame = Frame(details_frame, width=200, height=200, borderwidth=2, relief="groove")
+    image_frame.grid(row=4, column=0, columnspan=2, pady=10, sticky="n")
+    image_frame.grid_propagate(False)  # Prevent the frame from resizing
+
+    # Placeholder for the image
+    image_label = Label(image_frame)
+    image_label.pack(fill="both", expand=True, padx=5, pady=5)
+
+    # Load and display a sample image (replace 'sample_image.png' with your image path)
+    try:
+        sample_image = Image.open("#")  # Replace with your image path
+        sample_image = sample_image.resize((150, 150))
+        sample_image_tk = ImageTk.PhotoImage(sample_image)
+        image_label.config(image=sample_image_tk)
+        image_label.image = sample_image_tk  # Keep a reference to avoid garbage collection
+    except FileNotFoundError:
+        image_label.config(text="No Image")
 
     # Add "Update" and "Delete" buttons side by side at the bottom of the details frame
     button_frame = Frame(details_frame)
-    button_frame.grid(row=4, column=0, columnspan=2, pady=20)
+    button_frame.grid(row=5, column=0, columnspan=2, pady=20, sticky="s")
 
     update_button = Button(button_frame, text="Update", width=20, bootstyle="secondary", command=lambda: messagebox.showinfo("Update", "Update operation"), padding=(5, 20))
     update_button.grid(row=0, column=0, padx=5)
@@ -98,9 +126,8 @@ def landing_page():
     delete_button.grid(row=0, column=1, padx=5)
 
     # Configure grid weights for responsiveness
-    details_frame.columnconfigure(0, weight=1)
+    details_frame.columnconfigure(0, weight=2)
     details_frame.columnconfigure(1, weight=3)
-
 # Create a new record function
 def newRecord():
     # Push the current page to the navigation stack
@@ -109,12 +136,16 @@ def newRecord():
     clear_frame(frame)
 
     # Configure the parent frame to center the form
-    frame.rowconfigure(0, weight=1)
-    frame.columnconfigure(0, weight=1)
+    frame.rowconfigure(0, weight=1)  # Space above the form
+    frame.rowconfigure(1, weight=0)  # Row for the form itself
+    frame.rowconfigure(2, weight=1)  # Space below the form
+    frame.columnconfigure(0, weight=1)  # Space to the left of the form
+    frame.columnconfigure(1, weight=0)  # Column for the form itself
+    frame.columnconfigure(2, weight=1)  # Space to the right of the form
 
     # Create a labeled frame for the form
     form_frame = ttk.LabelFrame(frame, text="New Record", padding=(16, 7))
-    form_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+    form_frame.grid(row=1, column=1, padx=20, pady=20, sticky="nsew")  # Centered in the grid
 
     # Record name label and entry
     name_label = Label(form_frame, text="Flight Name:")
@@ -122,19 +153,19 @@ def newRecord():
     name_entry = Entry(form_frame, width=50)
     name_entry.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
 
-    # Flight type label and combobox (moved above description)
+    # Flight type label and combobox
     flight_type_label = Label(form_frame, text="Flight Type:")
     flight_type_label.grid(row=1, column=0, padx=10, pady=10, sticky="w")
     flight_type_combo = ttk.Combobox(
         form_frame,
         values=["Commercial", "Private", "Cargo", "Military", "Exploratory"],
         width=47,
-        state="readonly",  # Make the combobox read-only
+        state="readonly",
     )
-    flight_type_combo.set("Select Flight Type")  # Default placeholder
+    flight_type_combo.set("Select Flight Type")
     flight_type_combo.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
 
-    # Record description label and larger text field (moved below type)
+    # Record description label and text field
     description_label = Label(form_frame, text="Flight Description:")
     description_label.grid(row=2, column=0, padx=10, pady=10, sticky="w")
     description_entry = Text(form_frame, width=50, height=5, wrap="word")
@@ -176,9 +207,15 @@ def newRecord():
     year_combo.set(current_year)
     year_combo.grid(row=1, column=2, padx=5)
 
+    # Image URL label and entry
+    image_url_label = Label(form_frame, text="Image URL:")
+    image_url_label.grid(row=4, column=0, padx=10, pady=10, sticky="w")
+    image_url_entry = Entry(form_frame, width=50)
+    image_url_entry.grid(row=4, column=1, padx=10, pady=10, sticky="ew")
+
     # Save button
     save_button = Button(form_frame, text="Save", width=20, bootstyle="success", padding=(5, 20))
-    save_button.grid(row=4, column=0, columnspan=2, pady=20)
+    save_button.grid(row=5, column=0, columnspan=2, pady=20)
 
     # Configure grid weights for responsiveness within the form
     form_frame.columnconfigure(0, weight=1)
