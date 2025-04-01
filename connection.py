@@ -1,0 +1,1 @@
+MONGO_URI="mongodb+srv://admin1234:admin1234@cluster0.h38ne.mongodb.net/"
